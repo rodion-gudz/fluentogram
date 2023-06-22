@@ -25,9 +25,9 @@ class TranslatorHub(AbstractTranslatorsHub):
             zip(
                 locales_map.keys(),
                 map(
-                    lambda lang: tuple([lang]) if isinstance(lang, str) else lang,
-                    locales_map.values()
-                )
+                    lambda lang: (lang,) if isinstance(lang, str) else lang,
+                    locales_map.values(),
+                ),
             )
         )
         self.translators = translators
@@ -46,11 +46,11 @@ class TranslatorHub(AbstractTranslatorsHub):
     ) -> Dict[str, Iterable[AbstractTranslator]]:
         return {
             lang: tuple(
-                [self.storage.get(locale)
-                 for locale in translator_locales if locale in self.storage.keys()]
+                self.storage.get(locale)
+                for locale in translator_locales
+                if locale in self.storage.keys()
             )
-            for lang, translator_locales in
-            locales_map.items()
+            for lang, translator_locales in locales_map.items()
         }
 
     def get_translator_by_locale(self, locale: str) -> TranslatorRunner:
